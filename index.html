@@ -1,0 +1,2214 @@
+<html>
+<head>
+<title>
+Polymer</title>
+
+<script src="../hosted/scripts/jquery.min.js"></script>
+<link rel="stylesheet" href="../hosted/stylesheets/jquery-ui.css">
+<script src="../hosted/scripts/jquery-ui.min.js"></script>
+<script src="../hosted/scripts/smoothscroll.js"></script>
+<script src="../hosted/scripts/jquery.material-ripple.js"></script>
+<link href="../hosted/fonts/material-icons/font.css" 
+      rel="stylesheet">
+<link href="../hosted/fonts/Proxima Nova/font.css"
+      rel="stylesheet">
+<link rel='icon' type='img/png' href="yt.build.img/favicon.png"/>
+<script src="../hosted/scripts/scrollbar.js"></script>
+	<link rel="stylesheet" type="text/css" href="../hosted/stylesheets/scrollbar.css">
+</head>
+<script>
+/*$(function() {
+    $( "#seekHandle" ).draggable({containment:"#seekTrack",axis:"x"});
+  });*/
+$(function() {
+    $( "#seekTrack" ).slider(
+    	{
+    		animate:"fast",
+    		range:"min",
+    		min:0,
+    		max:100,
+    		step:0.05,
+    		slide:function(){var val=$('#seekTrack').slider('value'); 
+    						var videos=$('video');
+    						for (var i = 0; i < videos.length; i++) {
+    								videos[i].currentTime=(val/100)*videos[i].duration;
+    							};	
+    						}
+ 		});
+	});
+</script>
+<script>
+    $(document).ready(function(){
+		$('input').focus(function(){
+			$(this).parent().css("border-color","rgba(220,33,41,0.3)");
+		});
+		$('input').focusout(function(){
+			$(this).parent().css("border-color","#d9d9e9");
+		});
+		$('#suggestionList>li').mouseover(function(){
+			$(this).find('.thumb').css(
+			{"-webkit-filter":"saturate(1)",
+			 "filter":"saturate(1)",
+			});
+			$(this).find('.more').css("opacity","1");
+		});
+		$('#suggestionList>li').mouseleave(function(){
+			$(this).find('.thumb').css(
+			{"-webkit-filter":"saturate(0.75)",
+			 "filter":"saturate(0.75)",
+			});
+			$(this).find('.more').css("opacity","0");
+		});
+		$('.vidOpt').mouseleave(function(){
+			window.setTimeout(function(){
+				$('.vidOpt.active').removeClass('active');
+			},200);
+		});
+	});
+    </script>
+<style>
+body
+{
+margin:0px;
+font-family:'Proxima Nova',sans-serif;
+-webkit-font-smoothing:antialiased;
+font-smoothing:antialiased;
+text-shadow:0px 0px 1px rgba(0,0,0,0.2);
+letter-spacing:0.02em;
+overflow-X:hidden;
+text-rendering:geometricPrecision;
+}
+#underlay
+{
+	background-image:url("yt.user.avatar/userDP.jpg");
+	background-size:cover;
+	-webkit-filter:blur(5px);
+	filter:blur(5px);
+	z-index:0;
+	position:fixed;
+	top:0;
+	bottom:0;
+	right:0;
+	left:0;
+}
+.button
+{
+color:white;
+padding:0px 15px;
+position:absolute;
+text-align:center;
+line-height:30px;
+height:30px;
+font-weight:"lighter";
+background-color:#1E88E5;
+display:block;
+border-radius:2px;
+box-shadow:0px 0px 2px 1px rgba(0,0,0,0.1),0px 2px 5px 1px rgba(0,0,0,0.2);
+margin:50px;
+cursor:pointer;
+transition:all 0.2s;
+-webkit-transform:scale(0.95);
+transform:scale(0.95);
+}
+.button:hover
+{box-shadow:0px 0px 5px 5px rgba(0,0,0,0.1),0px 10px 20px 10px rgba(0,0,0,0.1);
+-webkit-transform:none;
+transform:none;
+}
+.player
+{
+height:100%;
+width:100%;
+position:absolute;
+display:block;
+transition:all 0.2s cubic-bezier(0.4, 0, 1, 1);
+}
+#real
+{
+top:0px;
+left:0px;
+}
+#frosted
+{z-index=+20;
+opacity:1;
+height:421px;
+bottom:0px;
+left:0px;
+-webkit-filter:blur(20px) brightness(0.9);
+filter:blur(20px) brightness(0.9);
+}
+#playVideo
+{
+font-family:"FontAwesome";
+text-align:center;
+line-height:421px;
+width:100%;
+height:100%;
+position:absolute;
+z-index:+20;
+font-size:70px;
+color:rgba(255,255,255,0.5);
+cursor:pointer;
+transition:all 0.2s cubic-bezier(0.4, 0, 1, 1);
+-webkit-user-select:none;
+user-select:none;
+}
+#playVideo:hover
+{
+font-size:90px;
+}
+#playVideo>i
+{
+	font-size:inherit;
+	line-height:421px;
+}
+.wrapper
+{
+width:100%;
+position:relative;
+background:rgba(0,0,0,1);
+overflow:hidden;
+}
+#playVideo.fadeOut
+{
+opacity:0;
+font-size:300px !important;
+}
+
+#controlPanel
+{position:absolute;
+ width:100%;
+height:0px;
+bottom:0px;
+-webkit-box-sizing:border-box;
+transition:all 0.2s;
+background:#4F4F4F;
+z-index:+40;
+-webkit-user-select:none;
+}
+.overlay
+{
+position:absolute;
+z-index:200;
+top:0px;
+bottom:0px;
+left:0px;
+right:0px;
+color:white;
+}
+#navBar
+{
+z-index:+400;
+width:100%;
+height:60px;
+background:#fff;
+position:fixed;
+top:0px;
+padding:0px 8%;
+-webkit-box-sizing:border-box;
+left:0px;
+transition:all 0.2s;
+box-shadow:0px 0px 2px 0px rgba(70,70,70,0.075);
+}
+#navBar>.inputWrapper
+{
+	position:absolute;
+	left:325px;
+	height:36px;
+	top:12px;
+	width:450px;
+	padding-left:15px;
+	padding-right:30px;
+}
+#navBar>.inputWrapper>#searchButton
+{
+	position:absolute;
+	color:rgba(100,100,100,1);
+	width:30px;
+	height:36px;
+	right:0px;
+}
+#navBar>.inputWrapper>#searchButton>i
+{
+	width:100%;
+	height:100%;
+	z-index:+100;
+	line-height:36px;
+	font-size:15px;
+	text-align:center;
+}
+#navBar>.inputWrapper>#searchButton:hover
+{
+	color:rgba(0,0,0,1);	
+}
+#navBar>.inputWrapper>#searchButton:active
+{
+	color:rgba(60,60,60,1);	
+}
+#navBar>.inputWrapper>input
+{
+	font-size:13px;
+	letter-spacing:0.02em;
+}
+#uploadButt
+{
+	height:32px;
+	margin-top:14px;
+	border-radius:4px;
+	background:rgba(220,33,41,1);
+	position:relative;
+	color:white;
+	display:inline-block;
+	float:right;
+	font-size:11px;
+	margin-right:10px;
+	overflow:hidden;
+	cursor:pointer;
+}
+#uploadButt:hover
+{
+	width:auto;
+}
+#uploadButt>i
+{
+	background:rgba(0,0,0,0);
+	display:block;
+	float:left;
+	height:32px;
+	width:32px;
+	line-height:32px;
+	text-align:center;
+	font-size:12px;
+	-webkit-transform:rotateZ(-90deg);
+	box-shadow:0px 0px 1px 0px rgba(0,0,0,0.3);
+}
+#uploadButt>i:hover
+{
+	background:rgba(0,0,0,0.1);
+}
+#uploadButt>i:active
+{
+	background:rgba(0,0,0,0.3);
+}
+#uploadButt>span
+{
+	display:block;
+	padding:0px 15px;
+	float:left;
+	line-height:32px;
+}
+#userTools
+{
+	float:right;
+	display:block;
+	height:36px;
+	padding:12px 10px;
+	position:relative;
+	cursor:pointer;
+}
+#userTools>img
+{
+	height:36px;
+	width:36px;
+	border-radius:100%;
+	float:left;
+	box-shadow:0px 0px 1px 0px rgba(70,70,70,0.5);
+}
+#userTools>span
+{
+	font-weight:100;
+	font-size:11px;
+	padding:0px 8px;
+	float:left;
+	margin-left:2px;
+	display:block;
+	line-height:36px;
+	color:rgba(100,100,100,1);
+}
+#userTools>i
+{
+	font-size:10px;
+	height:10px;
+	width:10px;
+	color:rgba(150,150,160,1);
+	line-height:10px;
+	margin-top:13px;
+	display:block;
+	float:left;
+	position:relative;
+	text-align:center;
+	border-radius:100%;
+	box-shadow:0px 0px 0px 1px rgba(150,150,160,1);
+}
+#notifier
+{
+	float:right;
+	display:block;
+	width:60px;
+	height:60px;
+	text-align:center;
+	color:rgba(170,170,170,1);
+	font-size:15px;
+	margin-right:0px;
+	position:relative;
+}
+.tag
+{
+	font-size:7px;
+	position:absolute;
+	background:rgba(220,33,41,1);
+	padding:2px 4px;
+	float:right;
+	display:block;
+	color:white;
+	border-radius:3px;
+	line-height:1;
+	top:20%;
+	left:50%;
+	z-index:+1;
+}
+
+#notifier>div>i
+{
+	line-height:60px;
+	position:absolute;
+	display:block;
+	width:60px;
+	transition:all 0.2s;
+}
+#notifier>div>i:hover
+{
+	color:rgba(100,100,100,1);
+}
+#mainPaper
+{
+width:100%;
+padding:15px 8%;
+padding-bottom:150px;
+margin-top:60px;
+display:table;
+position:relative;
+background:rgba(235,235,237,1);
+}
+#videoSheet
+{
+ position:relative;
+ min-height:700px;
+ width:749px;
+ float:left;
+ display:table-cell;
+}
+.avAction
+{
+display:inline-block;
+line-height:48px;
+font-size:25px;
+text-align:center;
+}
+#avControl
+{
+  position:relative;
+  padding:0px 8px;
+  background:rgba(0,0,0,0);
+  height:32px;
+  display:inline-flex;
+  margin:8px 8px;
+}
+.material-icons
+{cursor:pointer;
+ -webkit-user-select:none;
+}
+.avAction.extra
+{ width:30px;
+  font-size:16px;
+}
+.right
+{
+	float:right !important;
+}
+
+#volToggle
+{font-size:18px;
+ margin-left:7px;
+ position:relative;
+ float:left;
+width:15px;
+}
+#headToggle
+{
+  line-height:32px !important;
+}
+#seekTrack
+{
+  z-index:+20;  
+  width:100%;
+  height:2px;
+  position:absolute;
+  bottom:100%;
+  margin-bottom:0px;
+  background-color:rgba(200,200,200,0.4);
+  transition:all 0.1s;
+  border:none;
+  border-radius:0px;
+  cursor:pointer;
+}
+
+#seekTrack>#played
+{
+height:100%; 
+background-color:rgb(220, 33, 41);
+position:relative;
+float:left;
+width:auto;
+}
+#seekTrack .ui-slider-handle
+{
+  opacity:1;
+  color:#000;
+  margin-top:5px;
+  background:rgba(220,33,41,0);
+  height:4px;
+  outline:none;
+  border:none;
+  border-radius:100px;
+  overflow: hidden;
+  width: 12px;
+  margin-left:0px;
+  transition:box-shadow 0.2s,height 0.2s,width 0.2s,margin-left 0.2s, margin-top 0.2s;
+}
+#seekTrack .ui-slider-handle.active
+{
+	height:10px;
+	background: rgba(220,33,41,1);
+	width: 10px;
+	margin-left:-5px;
+	margin-top:2px;
+}
+#seekTrack .ui-slider-handle.active:hover
+{
+	height:20px;
+	width: 20px;
+	margin-left: -8px;
+	margin-top:-3px;
+}
+#seekTrack .ui-slider-range-min
+{
+	background:rgb(220,33,41);
+	border-radius:0px;
+}
+#vidSettings
+{
+	position:relative;
+}
+#timer
+{
+height:48px;
+line-height:48px;
+font-weight:100;
+font-size:10px;
+margin:0px;
+padding:0px;
+margin-left:100px;
+display:inline-block;
+position:absolute;
+font-weight: 400;
+letter-spacing: 0.06em;
+text-shadow:0px 0px 1px rgba(0,0,0,0.7);
+}
+#timer:after
+{
+content:"";
+position:absolute;
+width:1px;
+height:10px;
+background:white;
+left:50%;
+top:50%;
+margin-top:-5px;
+margin-left:-1px;
+}
+.time
+{
+padding:0px 5px;
+margin:0px 1px 0px 0px;
+}
+#totalTime
+{
+color:#9A9EA5;
+}
+#volControl
+{
+height:48px;
+top:0px;
+position:absolute;
+display:inline-block;
+}
+#volTrack
+{
+background:rgba(0,0,0,0.25);
+height:4px;
+border-radius:10px;
+width:50px;
+position:absolute;
+top:50%;
+margin-top:-2px;
+float:left;
+}
+#volLevel
+{
+background:white;
+height:4px;
+width:60%;
+border-radius:10px;
+}
+#YTlogo
+{
+height:110%;
+top:-5%;
+position:absolute;
+display:inline-flex;
+margin-left:-25px;
+float:left;
+transition:all 0.2s ease-out;
+z-index:1;
+}
+#YTlogo>img
+{
+height:100%;
+width:auto;
+position:relative;
+}
+#navMenu
+{
+height:100%;
+display:inline-flex;
+padding-right:10px;
+float:left;
+
+}
+#navMenu>i
+{
+	line-height:60px;
+	color:#aaa;
+	font-size:20px;
+	z-index:+100;
+	transition:all 0.2s;
+}
+#navMenu>i:hover
+{
+	color:#444;
+}
+#stage
+{
+	position:relative;
+	float:top;
+	margin-bottom:20px;
+}
+#stageTitle
+{
+	z-index:+100;
+	position:relative;
+	display:block;
+}
+.videoCard
+{
+	width:100%;
+	border-radius:3px;
+	background:#fff;
+	min-height:100px;
+	font-weight:"lighter";
+	z-index:+40;
+	margin-bottom:25px;
+	padding:20px 27px 15px 27px;
+	box-sizing:border-box;
+	color:rgba(18,18,20,1);
+	box-shadow:0px 0px 2px 0px rgba(70,70,70,0.075);
+}
+#videoSheet .videoTitle
+{
+	font-size:30px;
+	display:block;
+	position:relative;
+	font-weight:100;
+	float:top;
+}
+#authorInfo
+{
+	display:block;
+	position:relative;
+	float:top;
+	height:60px;
+	padding:20px 0px;
+	border-bottom:1px solid rgba(0,0,0,0.07);
+}
+#authorInfo>img
+{
+	height:60px;
+	width:60px;
+	float:left;
+	border-radius:100%;
+	box-shadow:0px 0px 3px -1px rgba(0,0,0,0.3);
+}
+#videoSheet .authorName
+{
+	padding-left:20px;
+	font-size:13px;
+	height:30px;
+	line-height:30px;
+	font-weight:normal;
+	color:rgb(107,110,115);
+	float:left;
+}
+#videoSheet .authorBadge
+{
+	color:#ccc;
+	height:30px;
+	margin:0px 5px;
+	width:30px;
+	float:left;
+	opacity:0.8;
+	font-weight: 100;
+}
+#videoSheet .authorBadge>i
+{
+	font-size:15px;
+	line-height:25px;
+	text-align:center;
+	border-radius:100%;
+}
+i
+{
+	-webkit-text-stroke:0;
+}
+button
+{
+	text-align:center;
+	line-height:1;
+	background:rgba(220, 33, 41,1);
+	font-size:8px;
+	color:white;
+	letter-spacing:0.03em;
+	font-weight:normal;
+	border:none;
+	outline:none;
+	font-family:inherit;
+}
+button:active
+{
+	border:none;
+	background:rgba(220,33,41,1);
+	outline:none;
+	box-shadow:0px 0px 25px 1px rgba(189, 53, 58, 1)inset;
+}
+#subscriber
+{
+	border-radius:3px 0px 0px 3px;
+	height:25px;
+	padding:0px 10px;
+	line-height:25px;
+	float:left;
+	display:block;
+	cursor:pointer;
+	position:relative;
+}
+#subscriberCount
+{
+	position:relative;
+	float:left;
+	height:25px;
+	display:block;
+	color:#999;
+	font-family:inherit;
+	font-size:11px;
+	padding:0px 15px;
+	box-sizing:border-box;
+	background:#eaeaef;
+	border-left:none;
+	z-index:0;
+	border-radius:0px 3px 3px 0px;
+	font-weight:600;
+	line-height:25px;
+}
+#videoFooter
+{
+	float:top;
+	display:block;
+	position:relative;
+	height:30px;
+	margin-top:15px;
+}
+#videoFooter>li
+{
+	list-style-type:none;
+	position:relative;
+	display:inline-flex;
+	float:left;
+	height:100%;
+	padding:0px 15px;
+	box-sizing:border-box;
+	border-right:1px solid rgba(0,0,0,0.07);
+	color:rgba(150,150,150,1);
+	cursor:pointer;
+	transition:all 0.1s;
+	text-align:center;
+}
+#videoFooter>li:hover
+{
+	color:rgba(100,100,100,0.8) !important;
+}
+#videoFooter>li>i
+{
+	font-size:22px;
+	line-height:30px;
+	color:rgba(206,209,216,1);
+	display:flex;
+	float:left;
+	flex-grow:0;
+	transition:all 0.1s;
+}
+#videoFooter>li>span
+{
+	float:left;
+	font-size:11px;
+	line-height:30px;
+	display:flex;
+	flex-grow:1;
+	margin-left:10px;
+	text-align:center;
+	text-shadow:0px 0px 1px rgba(0,0,0,0.15);
+}
+.listAnomaly
+{
+	border:none !important;
+}
+#viewCount
+{
+	float:right;
+	position:absolute;
+	bottom:-1px;
+	right:0px;
+	font-weight:700;
+	color:#666;
+	font-size:30px;
+	border-bottom:1px solid rgba(220,33,41,1);
+	padding:10px 0px;
+}
+#likeButt>i:hover
+{
+	color:rgba(150,150,150,1);
+}
+#unlikeButt>i:hover
+{
+	color:rgba(150,150,150,1);
+}
+#likeButt>i:active
+{
+	color:rgba(50,50,50,1);
+}
+#unlikeButt>i:active
+{
+	color:rgba(50,50,50,1);
+}
+.videoCard h3
+{
+	font-size:13px;
+	font-weight:600;
+	color:rgba(30,30,30,1);
+	display:inline-block;
+	float:top;
+}
+.videoCard h5
+{
+	font-size:11px;
+	color:rgba(100,100,100,1);
+	display:block;
+	float:top;
+	font-weight:400;
+	line-height:1.5;
+	margin:0;
+}
+.videoCard a , .videoCard h5>a
+{
+	text-decoration:none;
+	transition:all 0.1s;
+	color:inherit;
+}
+.videoCard>a:hover, .videoCard>h5>a:hover
+{
+	color:rgba(114, 159, 237, 1);
+}
+.showMore
+{
+	color:rgba(100,100,100,1);
+	font-size:10px;
+	font-weight:100;
+	height:30px;
+	border-top:1px solid rgba(0,0,0,0.07);
+	margin-top:15px;
+}
+.showMore>span
+{
+	border-top:1px solid rgba(220,33,41,1);
+	height:30px;
+	padding-top:17px;
+	margin-top:-1px;
+	display:block;
+	width:150px;
+	margin-right:auto;
+	margin-left:auto;
+	text-align:center;
+	letter-spacing:0.01em;
+	font-weight:bolder;
+	cursor:pointer;
+}
+#commentCount
+{
+	color:rgba(100,100,105,1);  
+	font-weight:normal; 
+	font-size:90%;
+}
+#myNewComment
+{
+	display:flex;
+	width:100%;
+	float:top;
+	height:50px;
+	margin-bottom:15px;
+}
+#myNewComment>img
+{
+	width:50px;
+	height:50px;
+	border-radius:100%;
+	display:inline-flex;
+	flex-grow:0;
+	float:left;
+	margin-right:20px;
+}
+.videoCard img
+{
+	box-shadow:0px 0px 2px 0px rgba(150,150,150,1);
+}
+#myNewComment>div
+{
+	flex-grow:1;
+	height:40px;
+	margin-top:5px;
+}
+#myNewComment>div>input
+{
+	font-size:12px;
+}
+
+.inputWrapper
+{
+	float:left;
+	display:inline-flex;
+	box-sizing:border-box;
+	padding:0px 20px;
+	border:1px solid #d9d9e9;
+	border-radius:2px;
+	box-shadow:0px 7px 0px -5px rgba(0,0,0,0.05) inset;
+	transition:all 0.2s;
+}
+input[type=text]
+{
+	border:none;
+	width:100%;
+	height:100%;
+	font-family:"Proxima Nova";
+	background:none;
+	outline:none;
+	font-weight:400;
+	letter-spacing:0.02em;
+}
+#commentNav
+{
+	display:block;
+	width:100%;
+	height:34px;
+	padding:7px 0px;
+	border-top:1px solid rgba(0,0,0,0.07);
+	border-bottom:1px solid rgba(0,0,0,0.07);
+	margin-bottom:15px;
+}
+#commentNav>li
+{
+	list-style-type:none;
+	display:block;
+	float:left;
+	color:rgba(100,100,105,1);
+	line-height:34px;
+	padding:0px 15px;
+	margin-right:11px;
+	font-size:10px;
+	font-weight:400;
+	position:relative;
+	cursor:pointer;
+	border-radius:4px;
+	transition:all 0.3s ease-out;
+}
+#commentNav>li.active
+{
+	color:white;
+	overflow:hidden;
+	background:rgb(220,33,41);
+}
+
+#commentNav>li.listAnomaly:before
+{
+	display:none !important;
+}
+
+#commentList
+{
+	display:block;
+	float:top;
+	min-height:150px;
+	margin-top:30px;
+}
+#commentList>li
+{
+	list-style-type:none;
+	display:inline-flex;
+	position:relative;
+	float:top;
+	min-height:60px;
+	padding:10px 0px;
+	width:100%;
+}
+#commentList>li>img
+{
+	width:50px;
+	height:50px;
+	flex-grow:0;
+	display:block;
+	border-radius:100%;
+	box-shadow:0px 0px 2px 0px rgba(150,150,150,1);
+	float:left;
+}
+#commentList>li>div
+{
+	flex-grow:1;
+	display:inline-block;
+	float:left;
+	position:relative;
+	padding:5px 20px;
+	box-sizing:border-box;
+}
+#commentList>li>div>span
+{
+	float:top;
+	display:table-cell;
+	height:14px;
+	vertical-align:bottom;
+}
+#commentList>li>div>span>.userName
+{
+	font-size:13px;
+	font-weight:500;
+	position:relative;
+	float:left;
+	flex-grow:0;
+	color:rgba(80,80,85,1);
+	line-height:14px;
+	cursor:pointer;
+}
+#commentList>li>div>span>.userName:hover
+{
+	color:rgba(18, 45, 113, 1);
+}
+#commentList>li>div>span>.commentDate
+{
+	flex-grow:1;
+	float:left;
+	padding:0px 5px;
+	color:rgb(210,210,220);
+	font-weight:100;
+	font-size:10px;
+	line-height:14px;
+}
+#commentList>li>div>.commentBody
+{
+	font-size:11px;
+	display:inline-block;
+	float:top;
+	margin:10px 0px;
+	width:600px;	
+	font-weight:100;
+	color:rgba(120,120,120,1);
+	transition:all 0.1s;
+	cursor:default;
+}
+#commentList>li>div>.commentBody:hover
+{
+	color:rgba(90,90,100,1);
+}
+#commentList>li>div>.commentExtra
+{
+	float:top;
+	display:block;
+	height:30px;
+}
+#commentList>li>div>.commentExtra>span
+{
+	font-size:12px;
+	cursor:pointer;
+	display:block;
+	height:20px;
+	margin-top:5px;
+	float:left;
+	padding-right:10px;
+	border-right:1px solid rgba(0,0,0,0.1);
+	color:rgba(90,90,90,1);
+	line-height:20px;
+	margin-right:10px;
+}
+#commentList>li>div>.commentExtra>i
+{
+	font-size:13px;
+	float:left;
+	display:block;
+	line-height:30px;
+	color:rgba(220,220,230,1);
+	padding-right:4px;
+}
+#commentList>li>div>.commentExtra>i:hover
+{
+	color:rgba(150,150,160,1);
+}
+#commentList>li>div>.commentExtra>i:active
+{
+	color:rgba(100,100,100,1);
+}
+#commentList>li .commentRating
+{
+	height:14px;
+	margin-top:8px;
+	box-shadow:0px 0px 0px 1px rgba(0,0,0,0.1);
+	color:rgba(170,170,180,1);
+	font-size:8px;
+	display:block;
+	padding:0px 8px;
+	border-radius:4px;
+	line-height:14px;
+	margin-left:4px;
+	float:left;
+}
+.ripple
+{
+	overflow:hidden;
+}
+.ripple-effect{
+  position: absolute;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  background: rgba(240,240,240,1);
+  animation: ripple-animation 2s;
+}
+
+
+@-webkit-keyframes ripple-animation {
+    from {
+      transform: scale(1);
+      opacity: 0.4;
+    }
+    to {
+      transform: scale(100);
+      opacity: 0;
+    }
+}
+@-keyframes ripple-animation {
+    from {
+      transform: scale(1);
+      opacity: 0.4;
+    }
+    to {
+      transform: scale(100);
+      opacity: 0;
+    }
+}
+#footer
+{
+	width:100%;
+	position:relative;
+	float:bottom;
+	height:200px;
+	background:rgb(220,33,41);
+	text-align:center;
+	transition:all 0.5s;
+}
+
+#footer>div
+{
+	min-width:300px;
+	height:120px;
+	display:inline-block;
+	padding:40px 20px;
+}
+#footer>div>div
+{
+	display:block;
+}
+#footer span,#footer li
+{
+	cursor:pointer;
+}
+#preferenceList>li
+{
+	list-style-type:none;
+	display:table-cell;
+	position:relative;
+	float:left;
+	color:white;
+	font-size:10px;
+	padding:10px 20px;
+	margin:0px 10px;
+	border:1px solid rgb(190,24,30);
+	border-radius:2px;
+	vertical-align:center;
+}
+#preferenceList>.preference
+{
+	padding-right:30px;
+	padding-left:15px;
+}
+.preference>i
+{
+	position:absolute;
+	font-size:12px;
+	color:rgb(190,24,30);
+	width:14px;
+	height:14px;
+	top:7px;
+	right:8px;
+	line-height:14px;
+	display:block;
+	box-shadow:0px 0px 0px 1px rgb(190,24,30) inset;
+	box-sizing:border-box;
+	text-align:center;
+	border-radius:100%;
+}
+#sitemap
+{
+	float:top;
+	position:relative;
+	margin-bottom:20px;
+}
+#sitemap>li
+{
+	list-style-type:none;
+	display:inline-block;
+	text-align:left;
+}
+#sitemap>li>.imp
+{
+	color:white;
+	display:block;
+	float:top;
+	height:20px;
+	font-size:12px;
+	padding:0px 10px;
+	line-height:20px;
+	margin:5px 0px;
+	font-weight:500;
+}
+#sitemap>li>.low
+{
+	color:rgb(245, 125, 128);
+	display:block;
+	float:top;
+	height:20px;
+	font-size:10px;
+	line-height:20px;
+	padding:0px 10px;
+	margin:5px 0px;
+}
+#sidebar
+{
+	display:table-cell;
+	min-height:600px;
+	width:355px;
+	margin-left:20px;
+	float:left;
+	position:relative;
+	-webkit-user-select:none;
+}
+#advert
+{
+	float:top;
+	width:100%;
+	display:block;
+	position:relative;
+	background-image:url('yt.build.img/advertisement.jpg');
+	background-size:cover;
+	background-position:50%;
+	margin-bottom:20px;
+}
+#suggestionList
+{
+	width:100%;
+	padding-top:10px;
+	display:block;
+	position:relative;
+}
+#suggestionList>li
+{
+	display:block;
+	height:100px;
+	position:relative;
+	float:top;
+	list-style-type:none;
+	cursor:pointer;
+	transition:all 0.2s ease-out;
+}
+#suggestionList>li:hover
+{
+	z-index:100;
+}
+#suggestionList>li>div
+{
+	display:inline-flex;
+	width:100%;
+	transition:all 0.2s ease-out;
+	padding:22px;
+	margin:-22px;
+	background:#fff;
+	overflow: hidden;
+}
+#suggestionList>li>div:hover
+{
+	-webkit-box-shadow:0px 0px 23px 0px rgba(0,0,0,0.15),0px 10px 28px 0px rgba(0,0,0,0.1);
+	-webkit-transform:scale(1.05);
+}
+#suggestionList>li .thumb
+{
+	width:45%;
+	float:left;
+	display:inline-block;
+	background-size:cover;
+	background-position:50%;
+	position:relative;
+	-webkit-filter:saturate(0.75);
+	transition:all 0.2s ease-out;
+}
+#suggestionList>li .thumb>span
+{
+	font-weight:100;
+	font-size:10px;
+	position:absolute;
+	bottom:0;
+	right:0;
+	padding:5px;
+	color:white;
+	-webkit-filter:drop-shadow(0px 0px 2px #000);
+}
+#suggestionList>li i.moreButt
+{
+	position:relative;
+	top: 5px;
+	right: 5px;
+	font-size: 18px;
+	-webkit-text-stroke:0px;
+	opacity: 0;
+	color:#ccc;
+	transition:all 0.2s;
+	float:right;
+	width:5px;
+	display:inline-block;
+	margin: -20px -10px;
+}
+#suggestionList>li i.moreButt:hover
+{
+	color:#555;
+}
+#sideBar .videoTitle
+{
+	float:left;
+	box-sizing:border-box;
+	padding-left:15px;
+	font-weight:400;
+	display:inline-block;
+	width:55%;
+	font-size:12px;
+	height:auto;
+}
+#sideBar .videoTitle>.authorName
+{
+	color:rgb(220,33,41);
+	font-size:10px;
+	font-weight:400;
+	padding:5px 0px;
+	display:block;
+}
+#sideBar .videoTitle>.extra
+{
+	color:rgb(150,150,150);
+	font-size:9px;
+	font-weight:100;
+	display:block;
+	padding:5px 0px;
+}
+#sideBar .videoTitle>.extra>span
+{
+	padding-right:6px;
+	display:block;
+	position:relative;
+	float:left;
+}
+#sideBar .videoTitle>.extra>span:first-child:after
+{
+	content:"-";
+	position:absolute;
+	display:block;
+	font:inherit;
+	color:inherit;
+	left:100%;
+	bottom:0px;
+	margin-left:-4px;
+}
+#sideBar #queueNext
+{
+	margin-bottom:20px;
+	border-bottom:1px solid rgba(0,0,0,0.07);
+	box-sizing:border-box;
+}
+.thumb>div
+{
+	position:absolute;
+	right:0;
+	bottom:0;
+	padding:5px;
+	-webkit-filter:drop-shadow(0px 0px 5px black);
+}
+.thumb>div>span
+{
+	color:rgba(255,255,255,0.9);
+	font-size:11px;
+	font-weight:100;
+	float:left;
+	display:block;
+	padding:2px 6px;
+}
+.thumb>div>div.tag
+{
+	position:relative;
+	color:rgba(255,255,255,0.9);
+	background:none;
+	font-size:9px;
+	font-weight:500;
+	float:left;
+	margin:0px;
+	padding:2px 4px;
+	font-style:italic;
+	border:1px solid white;
+	left:unset;
+	top:unset;
+}
+#autoplaySwitch
+{
+	float:right;
+}
+#autoplaySwitch>h3
+{
+	color:#889;
+	display:inline-block;
+	font-size:13px;
+	font-weight:500;
+	float:left;
+	padding-bottom:15px;
+	padding-right:5px;
+}
+.switch
+{
+	float:left;
+	display:inline-block;
+	font-size:5px;
+	font-weight:900;
+	border-radius:50%;
+	height:16px;
+	width:16px;
+	line-height:16px;
+	text-align:center;
+	margin-top:-4px;
+	transform:scale(0.9);
+	transition:all 0.2s cubic-bezier(0.56, 0.55, 1, 1.74);
+	box-shadow: 0px 2px 5px 1px rgba(0,0,0,0) inset;
+}
+.switch:active
+{
+	transform:scale(0.5);
+}
+.switch.active
+{
+	color:#5cc;
+	border:2px solid #5CC;
+	font-size: 12px;
+}
+.switch.inactive
+{
+	border:2px solid #dde;
+	opacity:0.8;
+	box-shadow: 0px 2px 5px 1px rgba(0,0,0,0.2) inset;
+}
+.switch.inactive:active
+{
+	transform:scale(0.5) rotateZ(90deg);
+}
+#suggestionList ul.vidOpt
+{
+	position: absolute;
+	display: block;
+	z-index:0;
+	top:0;
+	right: 0;
+	opacity: 0;
+	transition:all 0.2s;
+	height:0px;
+	width:0px;
+	padding: 9px 2px;
+	margin:0px;
+}
+
+#suggestionList ul.vidOpt>li
+{
+	list-style-type: none;
+	position: relative;
+	float: top;
+	display: block;
+	transition:all 0.2s;
+	text-align: center;
+	transform:scale(0);
+}
+#suggestionList ul.vidOpt>li>i
+{
+	display: block;
+	text-align: center;
+	transition:all 0.2s ease-out;
+	line-height:50px;
+	color:rgba(255,255,255,0);
+	width:50px;
+	height:50px;
+	border-radius: 100px;
+	overflow: hidden;
+	font-size:0px;
+}
+#suggestionList ul.vidOpt.active:hover
+{
+	-webkit-filter:none;
+}
+#suggestionList ul.vidOpt.active
+{
+	padding:0;
+	width:100%;
+	background: rgba(255,255,255,0.8);
+	height:100%;
+	opacity:1;
+	display:table-cell;
+	z-index:10;
+	overflow:hidden;
+}
+#suggestionList ul.vidOpt.active>li
+{
+	float:left;
+	display: inline-block;
+	position: relative;
+	width:calc(100%/3);
+	height: 100%;
+	transform:scale(1);
+}
+#suggestionList ul.vidOpt.active>li>i
+{
+	width:70px !important;
+	height: 70px !important;
+	position: absolute;
+	top: 50%;
+	overflow: visible;
+	left: 50%;
+	font-size: 25px;
+	background: transparent;
+	line-height: 70px;
+	margin: -35px;
+	color:rgb(220,33,41);
+	transform:scale(0.95);
+}
+#suggestionList ul.vidOpt.active>li:nth-child(1)
+{
+	transition-delay:0.0666s;	
+}
+#suggestionList ul.vidOpt.active>li:nth-child(2)
+{
+	transition-delay:0.1333s;
+}
+#suggestionList ul.vidOpt.active>li:nth-child(3)
+{
+	transition-delay:0.2s;
+}
+#suggestionList ul.vidOpt.active>li>i:hover
+{
+	background: rgba(0,0,0,0.05);
+}
+#suggestionList ul.vidOpt.active>li>i:active
+{
+	transform:scale(0.9);
+}
+.ui-scrollHandle
+{
+	background:rgba(220,33,41,1);
+	box-shadow:0px 2px 10px 0px rgba(0,0,0,0.25);
+	border-radius: 2px;
+	width: 4px;
+	transition:width 0.2s,margin-left 0.2s,border-radius 0.2s;
+	margin-left:9px;
+	cursor:pointer;
+}
+.ui-scrollHandle.active
+{
+	width: 8px;
+	margin-left:7px;
+	border-radius: 5px;
+}
+#stage.fullScreen
+{
+	position:fixed;
+	bottom:0;
+	right:0;
+	top:0;
+	left:0;
+	height:unset !important;
+	z-index:+1000;
+	margin:0;
+	padding:0;
+}
+</style>
+
+
+<body>
+<div id="navBar">
+	<div id="navMenu"><i class="material-icons">menu</i></div>
+	<a id="YTlogo" href="https://www.youtube.com/?hl=en&tab=i1&gl=IN"><img src="yt.build.img/YTlogo.png"></a>
+	<div class="inputWrapper"><input id="searchString" type="text" placeholder="Search on YouTube"/><span id="searchButton"><i class="material-icons">search</i></span></div>
+	<div id="userTools" class="ripple" data-ripple-color="rgb(220,33,41)">
+		<img src="yt.user.avatar/myDP.jpg"/>
+		<span>Ricardo Gere</span>
+		<i class="material-icons">expand_more</i>
+	</div>
+	<div id="notifier" class="ripple" data-ripple-color="rgb(220,33,41)">
+		<div style="position:absolute;width:60px;height:60px;">
+			<i class="material-icons">notifications_none</i>
+			<div class="tag">32</div>
+		</div>
+	</div>
+	<div id="uploadButt" class="ripple">
+		<i class="material-icons">arrow_forward</i>
+		<span>Upload</span>
+	</div>
+</div>
+<div id="mainPaper">
+	<div id="videoSheet">
+		<div class="wrapper fixedRatio" id="stage" ratio="1.7777777778">
+			<div id="playVideo" onclick="playPause()"><i class="material-icons">play_arrow</i></div>
+			<video id="real" class="player">
+				<source src="yt.video/sugar.mp4"></source>
+			</video>
+			
+			<div id="controlPanel">
+				<div id="seekTrack">
+					
+				</div>
+				<div style="position:absolute;top:0px;right:0px;left:0px;bottom:0px;overflow:hidden;">
+					<video id="frosted" class="player fadeOut" muted>
+						<source src="yt.video/sugar.mp4"></source>
+					</video>
+				</div>
+				<div class="overlay">
+					<div id="avControl" class="avAction"><i class="material-icons" id="headToggle" onclick="playPause()">play_arrow</i></div>
+					<div id="volControl">
+						<i class="material-icons avAction" id="volToggle">volume_down</i>
+						<div style="height:48px;padding:0px 5px;position:relative;float:left;"><div id="volTrack"><div id="volLevel"></div></div></div>
+					</div>
+					<span id="timer"><span class="time" id="elapsedTime">00:00</span><span class="time" id="totalTime">00:00</span></span>
+        		    <div class="avAction extra right" id="vidSettings" style="margin-right:10px;">
+						<i class="material-icons" style="font-size:inherit;line-height:48px;" title="Settings">settings</i>
+						<div class="tag"><i>HD</i></div>
+					</div>
+					<i class="material-icons avAction extra right" id="fullScreen" title="Go Fullscreen">crop_free</i>
+					<i class="material-icons avAction extra right" id="ARToggle" title="Theatre Mode">crop_landscape</i>
+					<i class="material-icons avAction extra right" id="watchLater" title="Add to Watch Later">access_time</i>                                                                              
+				</div>
+			</div>
+		</div>
+		<div id="stageTitle">
+			<div class="videoCard">
+				<div class="videoTitle">Sugar - Maroon 5 [HD]</div>
+				<div id="authorInfo">
+					<img src="yt.user.avatar/userDP.jpg"/>
+					<span class="authorName">Maroon5VEVO</span>
+					<div class="authorBadge"><i class="material-icons">verified_user</i></div>
+					<div style="height:25px;display:block;position:absolute;bottom:25px;left:80px;">
+						<button id="subscriber" class="ripple">
+							<i class="material-icons" style="font-size:15px; line-height:25px;float:left;margin-right:10px;">
+								play_arrow
+							</i>
+							<span style="float:left;font-size:11px; line-height:25px;">
+								Subscribe
+							</span>
+						</button>
+						<div id="subscriberCount">1,923,305</div>
+					</div>
+					<div id="viewCount">704,593,234</div>
+				</div>
+				<div id="videoFooter">
+					<li id="addTo" class="ripple" data-ripple-color="#999"><i class="material-icons">add_circle_outline</i><span>Add to</span></li>
+					<li id="shareVideo" class="ripple" data-ripple-color="#999"><i class="material-icons">share</i><span>Share</span></li>
+					<li id="moreOptions" class="ripple listAnomaly" data-ripple-color="#999"><i class="material-icons">more_horiz</i><span>More</span></li>
+					<li class="right listAnomaly" id="unlikeButt"><i class="material-icons">thumb_down</i><span>93</span></li>
+					<li class="right" id="likeButt"><i class="material-icons">thumb_up</i><span>1,223,293</span></li>
+				</div>
+			</div>
+			<div class="videoCard">
+				<h3>Published on Jan 14, 2015</h3>
+				<h5>
+					Buy sugar on iTunes: <a href="http://smarturl.it/M5V">http://smarturl.it/M5V</a>
+					<br/>
+					Tickets for Maroon 5&rsquo;s North American with Rozzi Crane and European Tour with Nick Gardner are on-sale now! <a href="http://www.maroon5.com/">http://www.maroon5.com/</a>
+				</h5>
+				<div class="showMore">
+					<span>Show More</span>
+				</div>
+			</div>
+			<div class="videoCard" id="commentDeck">
+				<h3>All Comments <span id="commentCount">(7,219)</span></h3>
+				<div id="myNewComment">
+					<img src="yt.user.avatar/myDP.jpg"/>
+					<div class="inputWrapper">
+						<input id="commentString" type="text" placeholder="Share your thoughts"/>
+					</div>
+				</div>
+				<div id="commentNav">
+					<li class="active ripple">Top Comments</li>
+					<li class="ripple">Newest First</li>
+					<li class="ripple listAnomaly">My Comments</li>
+				</div>
+				<div id="commentList">
+					<li>
+						<img src="yt.user.avatar/user_1DP.jpg" />
+						<div>
+							<span><span class="userName">Alexandre Garon</span><span class="commentDate">2 weeks ago</span></span>
+							<h5 class="commentBody">
+								This is Photoshop's version of Lorem Ipsum. Proin Gravida nibh vel velit auctor aliquet. Aenean sollicitudin, lorem quis
+								biben-dum auctor, nisi elit consequat ipsum, nec sagittis sem nibh id alit. Duis sed odio sit amet nibh vulpate cursus a sit amet
+								mauris. Morbi accusman ipsum velit. Nam nec tellus a odio tincidunt auctor a ornare odio. Sed non mauris vitae erat consequat
+								auctor eu in elit.
+							</h5>
+							<div class="commentExtra">
+								<span>Reply</span>
+								<i class="material-icons">thumb_up</i>
+								<i class="material-icons">thumb_down</i>
+								<div class="commentRating">13</div>
+							</div>
+						</div>
+					</li>
+					<li>
+						<img src="yt.user.avatar/user_2DP.jpg" />
+						<div>
+							<span><span class="userName">Ang&egrave;lique Daoust</span><span class="commentDate">3 weeks ago</span></span>
+							<h5 class="commentBody">
+								Proin Gravida nibh vel velit auctor aliquet. Aenean sollicitudin, lorem quis biben-dum auctor, nisi elit consequat 
+								ipsum, nec sagittis sem nibh id alit. Duis sed odio sit amet nibh vulpate cursus a sit amet
+								mauris. Morbi accusman ipsum velit. Nam nec tellus a odio tincidunt auctor a ornare odio. Sed non mauris vitae erat consequat
+								auctor eu in elit. This is Photoshop's version of Lorem Ipsum. 
+							</h5>
+							<div class="commentExtra">
+								<span>Reply</span>
+								<i class="material-icons">thumb_up</i>
+								<i class="material-icons">thumb_down</i>
+								<div class="commentRating">10</div>
+							</div>
+						</div>
+					</li>
+					<li>
+						<img src="yt.user.avatar/user_3DP.jpg" />
+						<div>
+							<span><span class="userName">Christopher Darhk</span><span class="commentDate">5 months ago</span></span>
+							<h5 class="commentBody">
+								Morbi accusman ipsum velit. Proin Gravida nibh vel velit auctor aliquet. Aenean sollicitudin, lorem quis
+								biben-dum auctor, nisi elit consequat ipsum, nec sagittis sem nibh id alit. Duis sed odio sit amet nibh vulpate cursus a sit amet
+								mauris. Nam nec tellus a odio tincidunt auctor a ornare odio. Sed non mauris vitae erat consequat
+								auctor eu in elit.
+							</h5>
+							<div class="commentExtra">
+								<span>Reply</span>
+								<i class="material-icons">thumb_up</i>
+								<i class="material-icons">thumb_down</i>
+								<div class="commentRating">5</div>
+							</div>
+						</div>
+					</li>
+				</div>
+				<div class="showMore">
+					<span>Show More</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="sidebar">
+		<div id="advert" class="fixedRatio" ratio="2"></div>
+		<div class="videoCard">
+			<h3>Up Next</h3><div id="autoplaySwitch"><h3>Autoplay</h3><h3 style="padding-right:0px;"><i class="switch active material-icons">check</i></div></h3>
+			<div id="suggestionList">
+				<li id="QueueNext">
+				<div>
+					<div style="background-image:url('yt.vid.thumb/payphone-thumb.jpg')" class="fixedRatio thumb" ratio="1.75">
+						<div><span>4:39</span><div class="tag">HD</div></div>
+					</div>	
+					<div class="videoTitle">
+						<i class="material-icons moreButt more">more_vertical</i>
+						<span class="authorName">by Maroon5Vevo</span>
+						<span>Maroon 5 - Payphone [HD]</span>
+						<span class="extra"><span>300,673,345 views</span><span>2 months ago</span></span>
+					</div>	
+					<ul class="vidOpt more">
+						<li><i class="material-icons" title="Watch Later">schedule</i></li>
+						<li><i class="material-icons" title="Share">share</i></li>
+						<li><i class="material-icons" title="Add to Playlist">playlist_add</i></li>
+					</ul>
+				</div>
+				</li>
+				<li>
+				<div>
+					<div style="background-image:url('yt.vid.thumb/theLightThatNeverComes-thumb.jpg')" class="fixedRatio thumb" ratio="1.75">
+						<div><span>4:40</span><div class="tag">HD</div></div>
+					</div>	
+					<div class="videoTitle">
+						<i class="material-icons moreButt more">more_vertical</i>
+						<span class="authorName">by Linkin Park</span>
+						<span>Linkin Park - The light that never comes</span>
+						<span class="extra"><span>992,742,249 views</span><span>4 weeks ago</span></span>
+					</div>
+					<ul class="vidOpt more">
+						<li><i class="material-icons" title="Watch Later">schedule</i></li>
+						<li><i class="material-icons" title="Share">share</i></li>
+						<li><i class="material-icons" title="Add to Playlist">playlist_add</i></li>
+					</ul>
+				</div>
+				</li>
+				<li>
+				<div>
+					<div style="background-image:url('yt.vid.thumb/breakFree-thumb.jpg')" class="fixedRatio thumb" ratio="1.75">
+						<div><span>4:08</span><div class="tag">HD</div></div>
+					</div>	
+					<div class="videoTitle">
+						<i class="material-icons moreButt more">more_vertical</i>
+						<span class="authorName">by ArianaGrandeVevo</span>
+						<span>Ariana Grande - Break Free ft. Zedd</span>
+						<span class="extra"><span>567,342,899 views</span><span>1 year ago</span></span>
+					</div>
+					<ul class="vidOpt more">
+						<li><i class="material-icons" title="Watch Later">schedule</i></li>
+						<li><i class="material-icons" title="Share">share</i></li>
+						<li><i class="material-icons" title="Add to Playlist">playlist_add</i></li>
+					</ul>
+				</div>
+				</li>
+				<li>
+				<div>
+					<div style="background-image:url('yt.vid.thumb/ghosttown-thumb.jpg')" class="fixedRatio thumb" ratio="1.75">
+						<div><span>5:29</span><div class="tag">HD</div></div>
+					</div>	
+					<div class="videoTitle">
+						<i class="material-icons moreButt more">more_vertical</i>
+						<span class="authorName">by MadonnaVevo</span>
+						<span>Madonna - Ghosttown</span>
+						<span class="extra"><span>25,430,749 views</span><span>3 days ago</span></span>
+					</div>
+					<ul class="vidOpt more">
+						<li><i class="material-icons" title="Watch Later">schedule</i></li>
+						<li><i class="material-icons" title="Share">share</i></li>
+						<li><i class="material-icons" title="Add to Playlist">playlist_add</i></li>
+					</ul>
+				</div>
+				</li>
+				<li>
+				<div>
+					<div style="background-image:url('yt.vid.thumb/countingStars-thumb.jpg')" class="fixedRatio thumb" ratio="1.75">
+						<div><span>4:44</span><div class="tag">HD</div></div>
+					</div>
+					<div class="videoTitle">
+						<i class="material-icons moreButt more">more_vertical</i>
+						<span class="authorName">by OneRepublicVevo</span>
+						<span>OneRepublic - Counting Stars</span>
+						<span class="extra"><span>506,242,294 views</span><span>2 months ago</span></span>
+					</div>
+					<ul class="vidOpt more">
+						<li><i class="material-icons" title="Watch Later">schedule</i></li>
+						<li><i class="material-icons" title="Share">share</i></li>
+						<li><i class="material-icons" title="Add to Playlist">playlist_add</i></li>
+					</ul>
+				</div>
+				</li>
+				<li>
+				<div>
+					<div style="background-image:url('yt.vid.thumb/welcome-thumb.jpg')" class="fixedRatio thumb" ratio="1.75">
+						<div><span>4:31</span><div class="tag">HD</div></div>
+					</div>
+					<div class="videoTitle">
+						<i class="material-icons moreButt more">more_vertical</i>
+						<span class="authorName">by Linkin Park</span>
+						<span>Fort Minor - Welcome</span>
+						<span class="extra"><span>204,309,485 views</span><span>1 week ago</span></span>
+					</div>
+					<ul class="vidOpt more">
+						<li><i class="material-icons" title="Watch Later">schedule</i></li>
+						<li><i class="material-icons" title="Share">share</i></li>
+						<li><i class="material-icons" title="Add to Playlist">playlist_add</i></li>
+					</ul>
+				</div>
+				</li>
+				<li>
+				<div>
+					<div style="background-image:url('yt.vid.thumb/gold-thumb.jpg')" class="fixedRatio thumb" ratio="1.75">
+						<div><span>3:48</span><div class="tag">HD</div></div>
+					</div>
+					<div class="videoTitle">
+						<i class="material-icons moreButt more">more_vertical</i>
+						<span class="authorName">by ImagineDragonsVevo</span>
+						<span>Imagine Dragons - Gold</span>
+						<span class="extra"><span>10,855,906 views</span><span>5 months ago</span></span>
+					</div>
+					<ul class="vidOpt more">
+						<li><i class="material-icons" title="Watch Later">schedule</i></li>
+						<li><i class="material-icons" title="Share">share</i></li>
+						<li><i class="material-icons" title="Add to Playlist">playlist_add</i></li>
+					</ul>
+				</div>
+				</li>
+				<li>
+				<div>
+					<div style="background-image:url('yt.vid.thumb/thinkingOutLoud-thumb.png')" class="fixedRatio thumb" ratio="1.75">
+						<div><span>4:57</span><div class="tag">HD</div></div>
+					</div>
+					<div class="videoTitle">
+						<i class="material-icons moreButt more">more_vertical</i>
+						<span class="authorName">by Ed Sheeran</span>
+						<span>Ed Sheeran - Thinking Out Loud</span>
+						<span class="extra"><span>608,848,973 views</span><span>9 months ago</span></span>
+					</div>
+					<ul class="vidOpt more">
+						<li><i class="material-icons" title="Watch Later">schedule</i></li>
+						<li><i class="material-icons" title="Share">share</i></li>
+						<li><i class="material-icons" title="Add to Playlist">playlist_add</i></li>
+					</ul>
+				</div>
+				</li>
+				<li>
+				<div>
+					<div style="background-image:url('yt.vid.thumb/rapGod-thumb.jpg')" class="fixedRatio thumb" ratio="1.75">
+						<div><span>6:06</span><div class="tag">HD</div></div>
+					</div>
+					<div class="videoTitle">
+						<i class="material-icons moreButt more">more_vertical</i>
+						<span class="authorName">by EminemVevo</span>
+						<span>Eminem - Rap God</span>
+						<span class="extra"><span>1,092,394,859 views</span><span>1 year ago</span></span>
+					</div>
+					<ul class="vidOpt more">
+						<li><i class="material-icons" title="Watch Later">schedule</i></li>
+						<li><i class="material-icons" title="Share">share</i></li>
+						<li><i class="material-icons" title="Add to Playlist">playlist_add</i></li>
+					</ul>
+				</div>
+				</li>
+				<li>
+				<div>
+					<div style="background-image:url('yt.vid.thumb/blankSpace-thumb.jpg')" class="fixedRatio thumb" ratio="1.75">
+						<div><span>4:32</span><div class="tag">HD</div></div>
+					</div>
+					<div class="videoTitle">
+						<i class="material-icons moreButt more">more_vertical</i>
+						<span class="authorName">by TaylorSwiftVevo</span>
+						<span>Taylor Swift - Blank Space</span>
+						<span class="extra"><span>1,016,162,456 views</span><span>8 months ago</span></span>
+					</div>
+					<ul class="vidOpt more">
+						<li><i class="material-icons" title="Watch Later">schedule</i></li>
+						<li><i class="material-icons" title="Share">share</i></li>
+						<li><i class="material-icons" title="Add to Playlist">playlist_add</i></li>
+					</ul>
+				</div>
+				</li>
+				<li>
+				<div>
+					<div style="background-image:url('yt.vid.thumb/waitingForTheEnd-thumb.jpg')" class="fixedRatio thumb" ratio="1.75">
+						<div><span>3:55</span><div class="tag">HD</div></div>
+					</div>
+					<div class="videoTitle">
+						<i class="material-icons moreButt more">more_vertical</i>
+						<span class="authorName">by Linkin Park</span>
+						<span>Linkin Park - Waiting For The End</span>
+						<span class="extra"><span>702,042,243 views</span><span>3 years ago</span></span>
+					</div>
+					<ul class="vidOpt more">
+						<li><i class="material-icons" title="Watch Later">schedule</i></li>
+						<li><i class="material-icons" title="Share">share</i></li>
+						<li><i class="material-icons" title="Add to Playlist">playlist_add</i></li>
+					</ul>
+				</div>
+				</li>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="footer">
+	<div>
+		<div id="sitemap">
+			<li><span class="imp">About</span><span class="low" style="letter-spacing:0.1em;">Terms</span></li>
+			<li><span class="imp">Press</span><span class="low">Privacy</span></li>
+			<li><span class="imp">Copyright</span><span class="low">Policy &amp; Safety</span></li>
+			<li><span class="imp">Creators</span><span class="low">Send Feedback</span></li>
+			<li><span class="imp">Advertise</span><span class="low">Try Someting New</span></li>
+			<li><span class="imp">Developers</span><span class="low">&copy; 2015 YouTube, LLC</span></li>
+			<li><span class="imp">+YouTube</span><span class="low">&nbsp;</span></li>
+		</div>
+		<div id="preferenceList">
+			<li class="preference">Language: English (US)<i class="material-icons">expand_more</i></li>
+			<li class="preference">Country: India<i class="material-icons">expand_more</i></li>
+			<li class="preference">Safety: Off<i class="material-icons">expand_more</i></li>
+			<li>History</li>
+			<li>Help</li>
+		</div>
+	</div>
+</div>
+</body>
+
+
+<script>
+var stage=document.getElementById("stage"),
+      playVideo=document.getElementById("playVideo"),
+      realPlayer=document.getElementById("real"),
+      frostGlass=document.getElementById("frosted"),
+      controlPanel=document.getElementById("controlPanel"),
+      headToggle=document.getElementById("headToggle"),
+      volToggle=document.getElementById("volToggle"),
+      seekTrack=document.getElementById("seekTrack"),
+      seekHandle=seekTrack.getElementsByClassName("ui-slider-handle"),
+      playedTrack=document.getElementById("played"),
+	  navBar=document.getElementById("navBar"),
+	  fixedRatio=document.getElementsByClassName('fixedRatio'),
+	  autoplay=document.getElementById('autoplaySwitch').getElementsByClassName('switch')[0],
+      docBody=document.body;
+
+/*Ranges
+0:<  1Hour
+1:>=1Hour
+*/
+var range=0;
+	
+/*Drop-Shadow for Header*/
+document.onscroll=function(){
+	if(window.scrollY>220)
+	{
+		navBar.style.boxShadow="0px 0px 5px 2px rgba(0,0,0,0.2)";	
+	}
+	else
+	{
+		navBar.style.boxShadow="0px 0px 2px 0px rgba(70,70,70,0.075)";	
+	}
+}
+/*Play-Pause*/
+function playPause(x){
+	if(realPlayer.paused==true)
+		realPlayer.play();
+	else 
+   		realPlayer.pause();
+}
+realPlayer.onplay=function(){
+	frostGlass.play();
+	frostGlass.style.webkitFilter="blur(20px) brightness(0.9)";
+	playVideo.classList.add("fadeOut");
+	headToggle.innerHTML="pause";
+	realPlayer.style.webkitFilter="brightness(1)";
+};
+realPlayer.onpause=function(){
+	frostGlass.pause();
+	playVideo.classList.remove("fadeOut");
+ 	headToggle.innerHTML="play_arrow"; 
+ 	realPlayer.style.webkitFilter="brightness(0.7)";
+ 	frostGlass.style.webkitFilter="blur(20px) brightness(0.7)";
+};
+
+/*End*/
+realPlayer.onended=function(){
+headToggle.innerHTML="refresh";
+playVideo.classList.remove("fadeOut");
+}
+
+/*volume toggle*/
+volToggle.onclick=function()
+{ if(realPlayer.muted==false)
+  {realPlayer.muted=true;
+   volToggle.innerHTML="volume_mute";
+  }
+else
+ { realPlayer.muted=false;
+   volToggle.innerHTML="volume_down";
+  }
+}
+/*Control Visibility*/
+stage.onmouseover=function(){
+controlPanel.style.height="50px";
+seekTrack.style.height="4px";
+seekHandle[0].classList.add("active");
+}
+stage.onmouseout=function(){
+controlPanel.style.height="0px";
+seekTrack.style.height="2px";
+seekHandle[0].classList.remove("active");
+}
+
+/*Video Buttons*/
+$('#fullScreen').click(function(){
+	if($(stage).hasClass('fullScreen'))
+	{
+		document.webkitExitFullscreen();
+		stage.classList.sremove('fullScreen');
+		frostGlass.setAttribute('style','');
+	}
+	else
+	{
+		document.body.webkitRequestFullScreen();
+		stage.classList.add('fullScreen');
+		frostGlass.style.height=screen.height;
+	}
+});
+playVideo.ondblclick=function(){
+	if($(stage).hasClass('fullScreen'))
+	{
+		document.webkitExitFullscreen();
+		stage.classList.remove('fullScreen');
+		frostGlass.setAttribute('style','');
+	}
+	else
+	{
+		document.body.webkitRequestFullScreen();
+		stage.classList.add('fullScreen');
+		frostGlass.style.height=screen.height;
+		playVideo.getElementsByTagName('i')[0].style.lineHeight=screen.height;
+	}
+}
+/*Time Tracking : Seek*/
+realPlayer.ontimeupdate=function(){
+
+	/*on the seek*/
+	
+
+	/*on the timer*/
+	document.getElementById("elapsedTime").innerHTML=this.currentTime.toString().toHHMMSS();
+}
+</script>
+<script type="text/javascript">
+	$("video").on("timeupdate", function (e) {
+		$t=(e.target.currentTime/e.target.duration)*100;
+	  	$("#seekTrack").slider({
+	  		'value':$t
+	  		})
+;});
+</script>
+<script>
+/*Seeking
+seekHandle.onmouseup=function(){
+var newPos=seekHandle.offsetLeft+10;
+newTime=(newPos/seekTrack.clientWidth)*realPlayer.duration;
+realPlayer.currentTime=newTime;
+frostGlass.currentTime=newTime;
+}
+*/
+
+/*Time from seconds to HH:MM:SS*/
+String.prototype.toHHMMSS = function () {
+    var sec_num = parseInt(this, 10); // don't forget the second param
+    var hours   = Math.floor(sec_num / 3600);
+    var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+    var seconds = sec_num - (hours * 3600) - (minutes * 60);
+    
+    if (hours   < 10) {hours   = "0"+hours;}
+    if (minutes < 10) {minutes = "0"+minutes;}
+    if (seconds < 10) {seconds = "0"+seconds;}
+if((range==1)||(hours!=0))
+{    var time    = hours+':'+minutes+':'+seconds;}
+else
+{var time=minutes+':'+seconds;}
+    return time;
+}
+//End of Player Scripting
+</script>
+<script>
+/*Comments innerNavigation*/
+var commentNav=document.getElementById("commentNav");
+var commentNavList=commentNav.getElementsByTagName('li');
+for(i=0;i<commentNavList.length;i++)
+{
+	commentNavList[i].onclick=function(){
+		var activated=commentNav.getElementsByClassName('active')[0];
+		activated.classList.remove('active');
+		this.classList.add('active');
+	}
+}
+</script>
+<script>
+	$switch=$('#autoplaySwitch').find('.switch');
+	$(document).ready(function(){
+		$switch.mouseup(function(){
+		 if($(this).hasClass('active')==1)
+		 	{
+				$(this).removeClass('active');
+				$(this).addClass('inactive');
+				$(this).html('');
+			}
+		else
+			{
+				$(this).removeClass('inactive');
+				$(this).addClass('active');
+				$(this).html('check');
+			}
+		});
+	});
+	
+/*
+	http://tinyurl.com/orc5ogl
+*/
+</script>
+<script>
+vidOptButt=document.getElementsByClassName('moreButt'),
+vidOpt=document.getElementsByClassName('vidOpt');
+for (var i = 0; i < vidOptButt.length; i++) 
+{
+	vidOptButt[i].onclick=function()
+		{
+			var tray=this.parentNode.parentNode;
+			tray.getElementsByClassName('vidOpt')[0].classList.add('active');
+		};
+};
+</script>
+<script>
+document.body.onload=function(){
+	var dur=realPlayer.duration.toString();
+	document.getElementById("totalTime").innerHTML=dur.toHHMMSS();
+	if(realPlayer.duration>3600)
+	{
+		document.getElementById("elapsedTime").innerHTML="00:00:00";
+		range=1;
+	}
+}
+function fixRatio(x)
+{
+	x.style.height=fixedRatio[i].clientWidth/Number(fixedRatio[i].getAttribute('ratio'));
+}
+for(i=0;i<fixedRatio.length;i++)
+{
+	fixRatio(fixedRatio[i]);
+}
+/*<div id="played"><div id="seekHandle">|&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;|</div></div>*/
+</script>
+</html>
